@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+      obstacles.forEach(o => (o.y += gameSpeed));
+      greenItems.forEach(i => (i.y += gameSpeed));
+
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        if (collision(player, obstacles[i])) {
+          obstacles.splice(i, 1);
+          life--;
+          document.getElementById("life").textContent = life;
+          if (life <= 0) gameOver = true;
+        } else if (obstacles[i].y > canvas.height) {
+          obstacles.splice(i, 1);
+        }
+      }
+
+      for (let i = greenItems.length - 1; i >= 0; i--) {
+        if (collision(player, greenItems[i])) {
+          greenItems.splice(i, 1);
+          score += 10;
+          document.getElementById("score").textContent = score;
+        } else if (greenItems[i].y > canvas.height) {
+          greenItems.splice(i, 1);
+        }
+      }
+    }
+
+    function collision(a, b) {
+      return (
+        a.x < b.x + (b.width || b.size) &&
+        a.x + a.width > b.x &&
+        a.y < b.y + (b.height || b.size) &&
+        a.y + a.height > b.y
+      );
+    }
+
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0,0,0,0.7)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "30px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvas.width / 2, 180);
+      ctx.font = "20px Arial";
+      ctx.fillText("Skor Akhir: " + score, canvas.width / 2, 220);
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawRoad();
+      drawPlayer();
+      drawObstacles();
+      drawGreenItems();
+      updateObjects();
+
+      if (gameOver) {
+        drawGameOver();
+      } else {
+        requestAnimationFrame(gameLoop);
+      }
+    }
+
+    setInterval(() => {
+      if (!gameOver) createObstacle();
+    }, 1200);
+
+    setInterval(() => {
+      if (!gameOver) createGreenItem();
+    }, 2000);
+
+    function restartGame() {
+      score = 0;
+      life = 3;
+      gameOver = false;
+      obstacles.length = 0;
+      greenItems.length = 0;
+      player.x = 380;
+      document.getElementById("score").textContent = score;
+      document.getElementById("life").textContent = life;
+      gameLoop();
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>
